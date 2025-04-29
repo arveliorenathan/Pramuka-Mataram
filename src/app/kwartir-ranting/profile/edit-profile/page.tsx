@@ -117,7 +117,7 @@ export default function EditProfile() {
             <Input
               type="file"
               className="hidden"
-              accept=".png"
+              accept=".png,.jpg,.jpeg"
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
