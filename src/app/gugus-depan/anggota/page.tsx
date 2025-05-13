@@ -444,194 +444,201 @@ export default function Anggota() {
           </Table>
         </CardContent>
       </Card>
-      <AlertDialog
-        open={isDeleteOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setIsDeleteOpen(false);
-            setDeleteId(null);
-          }
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Apakah anda yakin ingin menghapus?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
-              menghapus akun Anda dan menghapus data Anda dari server kami.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="hover:bg-gray-200 transition-all duration-200">
-              Batal
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
-              onClick={handleDelete}
+      <div>
+        <AlertDialog
+          open={isDeleteOpen}
+          onOpenChange={(open: boolean) => {
+            if (!open) {
+              setIsDeleteOpen(false);
+              setDeleteId(null);
+            }
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Apakah anda yakin ingin menghapus?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+                menghapus akun Anda dan menghapus data Anda dari server kami.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="hover:bg-gray-200 transition-all duration-200">
+                Batal
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
+                onClick={handleDelete}
+              >
+                Hapus
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+      <div>
+        <Dialog
+          open={isEditOpen}
+          onOpenChange={(open: boolean) => {
+            if (!open) {
+              setIsEditOpen(false);
+              setEditId(null);
+              setEditData({});
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-center text-2xl">
+                Ubah Profil Anggota
+              </DialogTitle>
+              <div>
+                <form>
+                  <h3 className="text-xl font-bold mt-2">Nama Anggota</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.nama_agt || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, nama_agt: e.target.value })
+                      }
+                      placeholder="Masukkan Nama Anggota"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">
+                    Nomor Tanda Anggota
+                  </h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.nta || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, nta: e.target.value })
+                      }
+                      placeholder="Masukkan Nomor Tanda Anggota"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">Tanggal Lahir</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="date"
+                      value={editData.tgl_lahir}
+                      onChange={(e) =>
+                        setEditData({ ...editData, tgl_lahir: e.target.value })
+                      }
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                      placeholder="DD-MM-YYYY"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">Alamat</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.alamat || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, tgl_lahir: e.target.value })
+                      }
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                      placeholder="DD-MM-YYYY"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">Jenis Kelamin</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.gender || ""}
+                      onValueChange={(value) =>
+                        setEditData({
+                          ...editData,
+                          gender: value as "LAKI_LAKI" | "PEREMPUAN",
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
+                        <SelectValue placeholder="Pilih Jenis Kelamin" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="LAKI_LAKI">Laki-Laki</SelectItem>
+                        <SelectItem value="PEREMPUAN">Perempuan</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">Agama</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.agama || ""}
+                      onValueChange={(value) =>
+                        setEditData({
+                          ...editData,
+                          agama: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
+                        <SelectValue placeholder="Pilih Agama" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="ISLAM">Islam</SelectItem>
+                        <SelectItem value="HINDU">Hindu</SelectItem>
+                        <SelectItem value="KATOLIK">Katolik</SelectItem>
+                        <SelectItem value="KRISTEN">Kristen</SelectItem>
+                        <SelectItem value="BUDDHA">Budha</SelectItem>
+                        <SelectItem value="KONGHUCU">Konghucu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">Status Keaktifan</h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.status_agt || ""}
+                      onValueChange={(value) =>
+                        setEditData({
+                          ...editData,
+                          status_agt: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Pilih Status" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="AKTIF">Aktif</SelectItem>
+                        <SelectItem value="NON_AKTIF">Tidak Aktif</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <h3 className="text-xl font-bold mt-2">
+                    Tahun Masuk Anggota
+                  </h3>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="number"
+                      value={editData.tahun_gabung || 0}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          tahun_gabung: Number(e.target.value),
+                        })
+                      }
+                      placeholder="Masukkan Tahun Masuk Anggota"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                </form>
+              </div>
+            </DialogHeader>
+            <Button
+              onClick={handleEditSubmit}
+              className="bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
             >
-              Hapus
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <Dialog
-        open={isEditOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setIsEditOpen(false);
-            setEditId(null);
-            setEditData({});
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl">
-              Ubah Profil Anggota
-            </DialogTitle>
-            <div>
-              <form>
-                <h3 className="text-xl font-bold mt-2">Nama Anggota</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.nama_agt || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, nama_agt: e.target.value })
-                    }
-                    placeholder="Masukkan Nama Anggota"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-2">Nomor Tanda Anggota</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.nta || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, nta: e.target.value })
-                    }
-                    placeholder="Masukkan Nomor Tanda Anggota"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-2">Tanggal Lahir</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="date"
-                    value={editData.tgl_lahir}
-                    onChange={(e) =>
-                      setEditData({ ...editData, tgl_lahir: e.target.value })
-                    }
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                    placeholder="DD-MM-YYYY"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-2">Alamat</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.alamat || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, tgl_lahir: e.target.value })
-                    }
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                    placeholder="DD-MM-YYYY"
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-2">Jenis Kelamin</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.gender || ""}
-                    onValueChange={(value) =>
-                      setEditData({
-                        ...editData,
-                        gender: value as "LAKI_LAKI" | "PEREMPUAN",
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
-                      <SelectValue placeholder="Pilih Jenis Kelamin" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="LAKI_LAKI">Laki-Laki</SelectItem>
-                      <SelectItem value="PEREMPUAN">Perempuan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <h3 className="text-xl font-bold mt-2">Agama</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.agama || ""}
-                    onValueChange={(value) =>
-                      setEditData({
-                        ...editData,
-                        agama: value,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
-                      <SelectValue placeholder="Pilih Agama" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="ISLAM">Islam</SelectItem>
-                      <SelectItem value="HINDU">Hindu</SelectItem>
-                      <SelectItem value="KATOLIK">Katolik</SelectItem>
-                      <SelectItem value="KRISTEN">Kristen</SelectItem>
-                      <SelectItem value="BUDDHA">Budha</SelectItem>
-                      <SelectItem value="KONGHUCU">Konghucu</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <h3 className="text-xl font-bold mt-2">Status Keaktifan</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.status_agt}
-                    onValueChange={(value) =>
-                      setEditData({
-                        ...editData,
-                        status_agt: value,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Pilih Status" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="AKTIF">Aktif</SelectItem>
-                      <SelectItem value="NON_AKTIF">Tidak Aktif</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <h3 className="text-xl font-bold mt-2">Tahun Masuk Anggota</h3>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="number"
-                    value={editData.tahun_gabung || 0}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        tahun_gabung: Number(e.target.value),
-                      })
-                    }
-                    placeholder="Masukkan Tahun Masuk Anggota"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-              </form>
-            </div>
-          </DialogHeader>
-          <Button
-            onClick={handleEditSubmit}
-            className="bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
-          >
-            Simpan Perubahan
-          </Button>
-        </DialogContent>
-      </Dialog>
+              Simpan Perubahan
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
