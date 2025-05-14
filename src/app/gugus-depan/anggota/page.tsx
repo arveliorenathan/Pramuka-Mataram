@@ -540,7 +540,7 @@ export default function Anggota() {
                       type="text"
                       value={editData.alamat || ""}
                       onChange={(e) =>
-                        setEditData({ ...editData, tgl_lahir: e.target.value })
+                        setEditData({ ...editData, alamat: e.target.value })
                       }
                       className="w-full border border-gray-500 rounded-lg px-3 py-2"
                       placeholder="DD-MM-YYYY"
