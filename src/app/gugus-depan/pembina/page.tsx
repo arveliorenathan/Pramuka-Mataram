@@ -362,7 +362,7 @@ export default function Pembina() {
                 Ubah Profil Pembina
               </DialogTitle>
               <div>
-                <form>
+                <form onSubmit={handleEditSubmit} className="w-full">
                   <h2 className="text-xl font-bold mt-2">Nama Pembina</h2>
                   <div className="w-full mx-auto mt-2">
                     <Input
@@ -478,15 +478,17 @@ export default function Pembina() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
+                    >
+                      Simpan Perubahan
+                    </Button>
+                  </div>
                 </form>
               </div>
             </DialogHeader>
-            <Button
-              onClick={handleEditSubmit}
-              className="bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
-            >
-              Simpan Perubahan
-            </Button>
           </DialogContent>
         </Dialog>
       </div>
