@@ -72,41 +72,21 @@ export default function Pembina() {
   const [editData, setEditData] = useState<Partial<PembinaData>>({});
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  console.log("Pembina", pembina);
 
   useEffect(() => {
+    if (!session) return;
+
+    const fetchData = async () => {
+      const profileRes = await fetch("/api/profile");
+      const pembinaRes = await fetch("/api/pembina");
+
+      if (profileRes.ok) setProfile(await profileRes.json());
+      if (pembinaRes.ok) setPembina(await pembinaRes.json());
+    };
+
+    fetchData();
     setMounted(true);
-    const fetchProfile = async () => {
-      if (session) {
-        const res = await fetch("/api/profile", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data);
-        }
-      }
-    };
-
-    const fetchMembers = async () => {
-      const res = await fetch("/api/pembina", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setPembina(data);
-      }
-    };
-
-    fetchProfile();
-    fetchMembers();
   }, [session]);
 
   const handleDelete = async () => {
@@ -240,9 +220,9 @@ export default function Pembina() {
                   </TableCell>
                 </TableRow>
               ) : (
-                pembina.map((pembina: PembinaData, index) => (
+                pembina.map((pembina, index) => (
                   <TableRow
-                    key={pembina.id_pembina}
+                    key={index}
                     className={index % 2 === 0 ? "bg-gray-300" : "bg-white"}
                   >
                     <TableCell className="text-center font-medium">
@@ -267,7 +247,7 @@ export default function Pembina() {
                       {pembina.alamat}
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="flex justify-center items-center">
+                      <div className="flex justify-center pembinas-center">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

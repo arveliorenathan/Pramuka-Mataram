@@ -526,7 +526,7 @@ export default function Anggota() {
                   <div className="w-full mx-auto mt-2">
                     <Input
                       type="date"
-                      value={editData.tgl_lahir}
+                      value={editData.tgl_lahir || ""}
                       onChange={(e) =>
                         setEditData({ ...editData, tgl_lahir: e.target.value })
                       }

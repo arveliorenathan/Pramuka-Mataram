@@ -8,13 +8,11 @@ import { generateWhereClause } from "@/lib/helpers/queryClause";
 
 // keperluan testing (nanti dihapus)
 // import { getSessionOrToken } from "@/lib/getSessionOrToken";
-import { Prisma } from "@prisma/client";
 
-// handler untuk tambah data anggota oleh role gusdep
 export async function POST(req: NextRequest) {
   // keperluan testing (nanti dihapus)
-//   const session = await getSessionOrToken(req);
-//   console.log("SESSION DEBUG:", session);
+  // const session = await getSessionOrToken(req);
+  // console.log("SESSION DEBUG:", session);
 
   // session yang asli (nanti uncomment)
   const session = await getServerSession(authOptions);
@@ -62,15 +60,18 @@ export async function POST(req: NextRequest) {
     if (!isValidEnum("Gender", gender)) {
       return NextResponse.json({ message: "Invalid gender" }, { status: 400 });
     }
+
     if (!isValidEnum("Agama", agama)) {
       return NextResponse.json({ message: "Invalid agama" }, { status: 400 });
     }
+
     if (!isValidEnum("StatusKeaktifan", status_agt)) {
       return NextResponse.json(
         { message: "Invalid status keaktifan" },
         { status: 400 }
       );
     }
+
     if (!isValidEnum("JenjangAnggota", jenjang_agt)) {
       return NextResponse.json(
         { message: "Invalid jenjang anggota" },
@@ -127,11 +128,10 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// handler untuk lihat data anggota (all roles with access restrictions)
 export async function GET(req: NextRequest) {
   // keperluan testing (nanti dihapus)
-//   const session = await getSessionOrToken(req);
-//   console.log("SESSION DEBUG:", session);
+  // const session = await getSessionOrToken(req);
+  // console.log("SESSION DEBUG:", session);
 
   // session yang asli (nanti uncomment)
   const session = await getServerSession(authOptions);
@@ -154,12 +154,15 @@ export async function GET(req: NextRequest) {
     const searchQuery = searchParams.get("search") || undefined;
     const statusFilter = searchParams.get("status");
 
+    // pagination
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+
     const validStatuses: ("AKTIF" | "NON_AKTIF" | "ALL")[] = [
       "AKTIF",
       "NON_AKTIF",
       "ALL",
     ];
-
     const filterStatus: "AKTIF" | "NON_AKTIF" | undefined =
       validStatuses.includes(statusFilter as "AKTIF" | "NON_AKTIF" | "ALL")
         ? statusFilter === "ALL"
@@ -167,91 +170,17 @@ export async function GET(req: NextRequest) {
           : (statusFilter as "AKTIF" | "NON_AKTIF")
         : undefined;
 
-    // tambahan
-    const getAnggota = async (whereClause: Prisma.AnggotaWhereInput) => {
-      const anggota = await prisma.anggota.findMany({
-        where: whereClause,
-        include: {
-          RiwayatJenjang: {
-            orderBy: { tgl_perubahan: "desc" },
-            take: 1,
-            select: { jenjang_agt: true },
-          },
-          gugusDepan: {
-            select: { nama_gusdep: true },
-          },
-        },
-      });
+    let gusdepKodeList: string[] = [];
 
-      // mapping untuk ambil jenjang terbaru dari RiwayatJenjang
-      return anggota.map((agt) => ({
-        id_anggota: agt.id_anggota,
-        nama_agt: agt.nama_agt,
-        nta: agt.nta,
-        tgl_lahir: agt.tgl_lahir,
-        tahun_gabung: agt.tahun_gabung,
-        gender: agt.gender,
-        agama: agt.agama,
-        alamat: agt.alamat,
-        status_agt: agt.status_agt,
-        jenjang_agt:
-          agt.RiwayatJenjang[0]?.jenjang_agt ?? agt.jenjang_agt ?? null,
-        gugus_depan: agt.gugusDepan?.nama_gusdep ?? null,
-      }));
-    };
-    // batas tambahan
-
-    if (kode_gusdep) {
-      let allowed = false;
-
-      // cek akses berdasarkan role
-      if (session.user.role === "USER_GUSDEP") {
-        allowed = session.user.kode_gusdep === kode_gusdep;
-      } else if (session.user.role === "USER_KWARAN") {
-        const gusdepKodeList = await getGusdepKodeByRegion(
-          session.user.kode_kwaran!,
-          true
-        );
-        allowed = gusdepKodeList.includes(kode_gusdep);
-      } else if (session.user.role === "USER_KWARCAB") {
-        const gusdepKodeList = await getGusdepKodeByRegion(
-          session.user.kode_kwarcab!,
-          false
-        );
-        allowed = gusdepKodeList.includes(kode_gusdep);
-      }
-
-      if (!allowed) {
-        return NextResponse.json(
-          { message: "Forbidden: Anda tidak punya akses ke gugus depan ini" },
-          { status: 403 }
-        );
-      }
-
-      // bangun klausa where berdasarkan status dan query
-      const whereClause = generateWhereClause(
-        { gusdepKode: kode_gusdep },
-        filterStatus,
-        searchQuery
-      );
-
-      // perubahan
-      const anggota = await getAnggota(whereClause);
-      return NextResponse.json(anggota);
-    }
-
-    let anggota;
-
-    // gugus depan hanya bisa melihat anggotanya sendiri
     if (session.user.role === "USER_GUSDEP") {
-      const whereClause = generateWhereClause(
-        { gusdepKode: session.user.kode_gusdep },
-        filterStatus,
-        searchQuery
-      );
-      anggota = await getAnggota(whereClause);
-
-      // kwaran bisa melihat anggota dari gugus depan di bawah naungannya
+      if (!session.user.kode_gusdep) {
+        return NextResponse.json(
+          { message: "Kode gugus depan tidak ditemukan di session" },
+          { status: 400 }
+        );
+      }
+      // gugus depan hanya bisa melihat anggotanya sendiri
+      gusdepKodeList = [session.user.kode_gusdep];
     } else if (session.user.role === "USER_KWARAN") {
       if (!session.user.kode_kwaran) {
         return NextResponse.json(
@@ -259,25 +188,11 @@ export async function GET(req: NextRequest) {
           { status: 400 }
         );
       }
-      const gusdepKodeList = await getGusdepKodeByRegion(
+      // kwaran bisa melihat anggota dari gugus depan di bawah naungannya
+      gusdepKodeList = await getGusdepKodeByRegion(
         session.user.kode_kwaran,
         true
       );
-      if (gusdepKodeList.length === 0) {
-        console.log(
-          `There are no Gugus Depan registered under Kwaran ${session.user.kode_kwaran}`
-        );
-        return NextResponse.json([]);
-      }
-
-      const whereClause = generateWhereClause(
-        { gusdepKode: { in: gusdepKodeList } },
-        filterStatus,
-        searchQuery
-      );
-      anggota = await getAnggota(whereClause);
-
-      // kwarcab bisa melihat anggota dari gugus depan di bawah naungannya
     } else if (session.user.role === "USER_KWARCAB") {
       if (!session.user.kode_kwarcab) {
         return NextResponse.json(
@@ -285,31 +200,63 @@ export async function GET(req: NextRequest) {
           { status: 400 }
         );
       }
-      const gusdepKodeList = await getGusdepKodeByRegion(
+      // kwarcab bisa melihat anggota dari gugus depan di bawah naungannya
+      gusdepKodeList = await getGusdepKodeByRegion(
         session.user.kode_kwarcab,
         false
       );
-      if (gusdepKodeList.length === 0) {
-        console.log(
-          `There are no Gugus Depan registered under Kwarcab ${session.user.kode_kwarcab}`
-        );
-        return NextResponse.json([]);
-      }
-
-      const whereClause = generateWhereClause(
-        { gusdepKode: { in: gusdepKodeList } },
-        filterStatus,
-        searchQuery
-      );
-      anggota = await getAnggota(whereClause);
     } else {
       return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
-    console.log(
-      `Role: ${session.user.role} | Total members found: ${anggota.length}`
+    if (!gusdepKodeList.length) {
+      console.log(`No Gugus Depan found for role: ${session.user.role}`);
+      return NextResponse.json([]);
+    }
+
+    const allowedKode =
+      kode_gusdep && gusdepKodeList.includes(kode_gusdep)
+        ? kode_gusdep
+        : undefined;
+
+    const whereClause = generateWhereClause(
+      allowedKode
+        ? { gusdepKode: allowedKode }
+        : { gusdepKode: { in: gusdepKodeList } },
+      filterStatus,
+      searchQuery
     );
-    return NextResponse.json(anggota);
+
+    const anggota = await prisma.anggota.findMany({
+      where: whereClause,
+      orderBy: { nama_agt: "asc" },
+      include: {
+        gugusDepan: {
+          select: { nama_gusdep: true },
+        },
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const result = anggota.map((agt) => ({
+      id_anggota: agt.id_anggota,
+      nama_agt: agt.nama_agt,
+      nta: agt.nta,
+      tgl_lahir: agt.tgl_lahir,
+      tahun_gabung: agt.tahun_gabung,
+      gender: agt.gender,
+      agama: agt.agama,
+      alamat: agt.alamat,
+      status_agt: agt.status_agt,
+      jenjang_agt: agt.jenjang_agt,
+      gugus_depan: agt.gugusDepan?.nama_gusdep ?? null,
+    }));
+
+    console.log(
+      `Role: ${session.user.role} | Total members found: ${result.length}`
+    );
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Error retrieving data:", error);
     return NextResponse.json(
