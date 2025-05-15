@@ -312,177 +312,184 @@ export default function Pembina() {
           </Table>
         </CardContent>
       </Card>
-      <AlertDialog
-        open={isDeleteOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setIsDeleteOpen(false);
-            setDeleteId(null);
-          }
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Apakah anda yakin ingin menghapus?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
-              menghapus akun Anda dan menghapus data Anda dari server kami.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="hover:bg-gray-200 transition-all duration-200">
-              Batal
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
-              onClick={handleDelete}
+      <div>
+        <AlertDialog
+          open={isDeleteOpen}
+          onOpenChange={(open: boolean) => {
+            if (!open) {
+              setIsDeleteOpen(false);
+              setDeleteId(null);
+            }
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Apakah anda yakin ingin menghapus?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+                menghapus akun Anda dan menghapus data Anda dari server kami.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="hover:bg-gray-200 transition-all duration-200">
+                Batal
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-600 text-white hover:bg-red-700 transition-all duration-200"
+                onClick={handleDelete}
+              >
+                Hapus
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+      <div>
+        <Dialog
+          open={isEditOpen}
+          onOpenChange={(open: boolean) => {
+            if (!open) {
+              setIsEditOpen(false);
+              setEditId(null);
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="text-center text-2xl">
+                Ubah Profil Pembina
+              </DialogTitle>
+              <div>
+                <form>
+                  <h2 className="text-xl font-bold mt-2">Nama Pembina</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.nama_pbn || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, nama_pbn: e.target.value })
+                      }
+                      placeholder="Masukkan Nama Pembina"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">
+                    Nomor Tanda Anggota
+                  </h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.nta || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, nta: e.target.value })
+                      }
+                      placeholder="Masukkan Nomor Tanda Anggota"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">Tanggal Lahir</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="date"
+                      value={editData.tgl_lahir || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, tgl_lahir: e.target.value })
+                      }
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                      pattern="\d{2}-\d{2}-\d{4}"
+                      placeholder="DD-MM-YYYY"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">Alamat</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Input
+                      type="text"
+                      value={editData.alamat || ""}
+                      onChange={(e) =>
+                        setEditData({ ...editData, alamat: e.target.value })
+                      }
+                      placeholder="Masukkan Alamat Anggota"
+                      className="w-full border border-gray-500 rounded-lg px-3 py-2"
+                    />
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">Jenis Kelamin</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.gender || ""}
+                      onValueChange={(value) =>
+                        setEditData({
+                          ...editData,
+                          gender: value as "LAKI_LAKI" | "PEREMPUAN",
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
+                        <SelectValue placeholder="Pilih Jenis Kelamin" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="LAKI_LAKI">Laki-Laki</SelectItem>
+                        <SelectItem value="PEREMPUAN">Perempuan</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">Agama</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.agama || ""}
+                      onValueChange={(value) =>
+                        setEditData({
+                          ...editData,
+                          agama: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
+                        <SelectValue placeholder="Pilih Agama" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="ISLAM">Islam</SelectItem>
+                        <SelectItem value="HINDU">Hindu</SelectItem>
+                        <SelectItem value="KATOLIK">Katolik</SelectItem>
+                        <SelectItem value="KRISTEN">Kristen</SelectItem>
+                        <SelectItem value="BUDDHA">Budha</SelectItem>
+                        <SelectItem value="KONGHUCU">Konghucu</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <h2 className="text-xl font-bold mt-2">Jenjang</h2>
+                  <div className="w-full mx-auto mt-2">
+                    <Select
+                      value={editData.jenjang_pbn || ""}
+                      onValueChange={(value) =>
+                        setEditData({ ...editData, jenjang_pbn: value })
+                      }
+                    >
+                      <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
+                        <SelectValue placeholder="Pilih Jenjang" />
+                      </SelectTrigger>
+                      <SelectContent className="w-full bg-white">
+                        <SelectItem value="SIAGA">Siaga</SelectItem>
+                        <SelectItem value="PENGGALANG">Penggalang</SelectItem>
+                        <SelectItem value="PENEGAK_PANDEGA">
+                          Penegak Pandega
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </form>
+              </div>
+            </DialogHeader>
+            <Button
+              onClick={handleEditSubmit}
+              className="bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
             >
-              Hapus
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <Dialog
-        open={isEditOpen}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setIsEditOpen(false);
-            setEditId(null);
-          }
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl">
-              Ubah Profil Pembina
-            </DialogTitle>
-            <div>
-              <form>
-                <h2 className="text-xl font-bold mt-2">Nama Pembina</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.nama_pbn || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, nama_pbn: e.target.value })
-                    }
-                    placeholder="Masukkan Nama Pembina"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mt-2">Nomor Tanda Anggota</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.nta || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, nta: e.target.value })
-                    }
-                    placeholder="Masukkan Nomor Tanda Anggota"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mt-2">Tanggal Lahir</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="date"
-                    value={editData.tgl_lahir || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, tgl_lahir: e.target.value })
-                    }
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                    pattern="\d{2}-\d{2}-\d{4}"
-                    placeholder="DD-MM-YYYY"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mt-2">Alamat</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Input
-                    type="text"
-                    value={editData.alamat || ""}
-                    onChange={(e) =>
-                      setEditData({ ...editData, alamat: e.target.value })
-                    }
-                    placeholder="Masukkan Alamat Anggota"
-                    className="w-full border border-gray-500 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <h2 className="text-xl font-bold mt-2">Jenis Kelamin</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.gender}
-                    onValueChange={(value) =>
-                      setEditData({
-                        ...editData,
-                        gender: value as "LAKI_LAKI" | "PEREMPUAN",
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
-                      <SelectValue placeholder="Pilih Jenis Kelamin" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="LAKI_LAKI">Laki-Laki</SelectItem>
-                      <SelectItem value="PEREMPUAN">Perempuan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <h2 className="text-xl font-bold mt-2">Agama</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.agama}
-                    onValueChange={(value) =>
-                      setEditData({
-                        ...editData,
-                        agama: value,
-                      })
-                    }
-                  >
-                    <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
-                      <SelectValue placeholder="Pilih Agama" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="ISLAM">Islam</SelectItem>
-                      <SelectItem value="HINDU">Hindu</SelectItem>
-                      <SelectItem value="KATOLIK">Katolik</SelectItem>
-                      <SelectItem value="KRISTEN">Kristen</SelectItem>
-                      <SelectItem value="BUDDHA">Budha</SelectItem>
-                      <SelectItem value="KONGHUCU">Konghucu</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <h2 className="text-xl font-bold mt-2">Jenjang</h2>
-                <div className="w-full mx-auto mt-2">
-                  <Select
-                    value={editData.jenjang_pbn}
-                    onValueChange={(value) =>
-                      setEditData({ ...editData, jenjang_pbn: value })
-                    }
-                  >
-                    <SelectTrigger className="w-full border border-gray-500 rounded-lg px-3 py-2">
-                      <SelectValue placeholder="Pilih Jenjang" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full bg-white">
-                      <SelectItem value="SIAGA">Siaga</SelectItem>
-                      <SelectItem value="PENGGALANG">Penggalang</SelectItem>
-                      <SelectItem value="PENEGAK_PANDEGA">Penegak Pandega</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </form>
-            </div>
-          </DialogHeader>
-          <Button
-            onClick={handleEditSubmit}
-            className="bg-amber-950 text-white text-base px-16 py-5 rounded-md hover:bg-gray-900 transition font-semibold mt-4"
-          >
-            Simpan Perubahan
-          </Button>
-        </DialogContent>
-      </Dialog>
+              Simpan Perubahan
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
