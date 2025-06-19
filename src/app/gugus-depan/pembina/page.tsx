@@ -72,8 +72,7 @@ export default function Pembina() {
   const [editData, setEditData] = useState<Partial<PembinaData>>({});
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  console.log("Pembina", pembina);
-
+  
   useEffect(() => {
     if (!session) return;
 
