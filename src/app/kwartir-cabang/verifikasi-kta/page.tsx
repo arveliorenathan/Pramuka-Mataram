@@ -142,13 +142,24 @@ export default function VerifikasiKTA() {
                 </div>
 
                 {/* Link download formulir */}
-                <Link
-                  href={ajuan.formulir}
-                  download
-                  className="bg-white text-black text-sm px-3 py-1 rounded-md flex items-center gap-1 cursor-pointer hover:bg-gray-200 transition"
-                >
-                  <Download className="w-6 h-6" />
-                </Link>
+                {ajuan.formulir ? (
+                  <Link
+                    href={ajuan.formulir}
+                    download
+                    className="bg-white text-black text-sm px-3 py-1 rounded-md flex items-center gap-1 cursor-pointer hover:bg-gray-200 transition"
+                  >
+                    <Download className="w-6 h-6" />
+                  </Link>
+                ) : (
+                  <Button
+                    disabled
+                    className="bg-gray-300 text-gray-500 text-sm px-3 py-1 rounded-md flex items-center gap-1 cursor-not-allowed"
+                    title="Formulir belum tersedia"
+                    type="button"
+                  >
+                    <Download className="w-6 h-6" />
+                  </Button>
+                )}
 
                 {/* Dropdown Status */}
                 <div className="bg-white text-black rounded-md">
